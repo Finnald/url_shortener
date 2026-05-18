@@ -1,0 +1,133 @@
+using System.Collections;
+using System.Text.Json;
+using Microsoft.Data.SqlClient;
+
+var MyAllowSpecificOrigins = "_myAllowSpecificOrigins";
+
+var builder = WebApplication.CreateBuilder(args);
+
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy(name: MyAllowSpecificOrigins,
+                      policy =>
+                      {
+                          policy.WithOrigins("http://localhost:5173");
+                      });
+});
+
+// Globals
+const int LENGTH = 5;
+
+// Add services to the container.
+// Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
+builder.Services.AddOpenApi();
+
+var app = builder.Build();
+
+// Configure the HTTP request pipeline.
+if (app.Environment.IsDevelopment())
+{
+    app.MapOpenApi();
+}
+
+app.UseHttpsRedirection();
+
+app.UseCors(MyAllowSpecificOrigins);
+
+// Azure SQL Connection
+string connectionString = app.Configuration.GetConnectionString("AZURE_SQL_CONNECTIONSTRING")!;
+
+// using var conn = new SqlConnection(connectionString);
+// conn.Open();
+// var command = new SqlCommand(
+//     "CREATE TABLE Persons (ID int NOT NULL PRIMARY KEY IDENTITY, FirstName varchar(255), LastName varchar(255));",
+//     conn);
+// using SqlDataReader reader = command.ExecuteReader();
+
+
+// Logic
+var chars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890";
+
+
+app.MapGet("/code", () =>
+{
+    return getCode();
+});
+
+// map code and link
+app.MapPost("/addCode/{link}", (string link) =>
+{
+    using var conn = new SqlConnection(connectionString);
+    // conn.Open();
+    var code = getCode();
+
+    var command = new SqlCommand(
+        $"INSERT INTO short_link (code, link) VALUES ('{code}', '{link}')", conn);
+    command.Connection.Open();
+    command.ExecuteNonQuery();
+});
+
+// get link from code
+app.MapGet("/{code}", (string code) =>
+{
+    using var conn = new SqlConnection(connectionString);
+
+    var cmd = new SqlCommand(
+        $"SELECT link FROM short_link WHERE code = '{code}';",
+        conn
+        );
+    cmd.Connection.Open();
+
+    // returns the result, there should only be one result as searching by pk
+    var reader = cmd.ExecuteReader();
+    reader.Read();
+    return $"http://{reader[0]}";
+});
+
+// get all links
+app.MapGet("/all", () =>
+{
+    using var conn = new SqlConnection(connectionString);
+
+    var cmd = new SqlCommand(
+        $"SELECT * FROM short_link;",
+        conn
+        );
+    cmd.Connection.Open();
+
+    // returns the results
+    ArrayList results = new ArrayList();
+    using (SqlDataReader reader = cmd.ExecuteReader())
+    {
+        while (reader.Read())
+        {
+            var record = new ShortLink
+            {
+                Link = reader[1].ToString(),
+                Code = reader[0].ToString()
+
+            };
+            results.Add(record);
+        }
+        string jsonString = JsonSerializer.Serialize(results);
+    }
+
+    return results.ToArray();
+});
+
+
+string getCode()
+{
+    var code = Enumerable.Repeat(chars, LENGTH).Select(s => s[Random.Shared.Next(s.Length)]);
+
+    return string.Join("", code);
+}
+
+
+app.Run();
+
+public class ShortLink
+{
+    public string? Link { get; set; }
+    public string? Code { get; set; }
+}

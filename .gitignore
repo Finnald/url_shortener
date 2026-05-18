@@ -1,0 +1,89 @@
+#######################################
+# OS
+#######################################
+.DS_Store
+Thumbs.db
+Desktop.ini
+
+#######################################
+# Editor / IDE
+#######################################
+.vscode/
+.vs/
+.idea/
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+
+#######################################
+# Logs
+#######################################
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+#######################################
+# Environment / secrets
+#######################################
+.env
+.env.*
+# Optional: keep template
+# !.env.example
+
+#######################################
+# FRONTEND (Vite React)
+#######################################
+
+# Dependencies
+node_modules/
+
+# Build output
+dist/
+build/
+
+# Vite cache
+.vite/
+
+# Lint cache
+.eslintcache
+
+#######################################
+# BACKEND (.NET)
+#######################################
+
+# Build output
+UrlShortenerBackend/bin/
+UrlShortenerBackend/obj/
+
+# User-specific files
+UrlShortenerBackend/*.user
+UrlShortenerBackend/*.rsuser
+
+# Visual Studio cache
+UrlShortenerBackend/.vs/
+
+# NuGet
+*.nupkg
+packages/
+.nuget/
+
+# Build artifacts
+publish/
+out/
+
+#######################################
+# ASP.NET Core configs
+#######################################
+UrlShortenerBackend/appsettings.Development.json
+UrlShortenerBackend/appsettings.local.json
+
+#######################################
+# Misc
+#######################################
+*.swp
+*.tmp
+*.bak
+*.orig
+``
