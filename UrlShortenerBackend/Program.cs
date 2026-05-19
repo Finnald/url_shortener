@@ -2,6 +2,7 @@ using System.Collections;
 using System.Text.Json;
 using Microsoft.Data.SqlClient;
 
+
 var MyAllowSpecificOrigins = "_myAllowSpecificOrigins";
 
 var builder = WebApplication.CreateBuilder(args);
@@ -15,8 +16,11 @@ builder.Services.AddCors(options =>
                       });
 });
 
+
 // Globals
 const int LENGTH = 5;
+
+
 
 // Add services to the container.
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
@@ -36,6 +40,7 @@ app.UseCors(MyAllowSpecificOrigins);
 
 // Azure SQL Connection
 string connectionString = app.Configuration.GetConnectionString("AZURE_SQL_CONNECTIONSTRING")!;
+
 
 // using var conn = new SqlConnection(connectionString);
 // conn.Open();
@@ -126,8 +131,3 @@ string getCode()
 
 app.Run();
 
-public class ShortLink
-{
-    public string? Link { get; set; }
-    public string? Code { get; set; }
-}

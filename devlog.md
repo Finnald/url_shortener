@@ -14,4 +14,12 @@
 - DB is hosted in azure, but will likely need to make something local for testing purposes -_-
 - Haven't deployed anything else to azure, since the free subscription is so limited
 - using ai to prototype front end
-##
+## 19/05/2026
+- Spent a lot of time trying to get a local db solution working
+- flip flopped between in memory and just hosting a local server
+- also looked into docker, but wasn't working on work network :P
+- fiddled around with local db stuff until I gave up and found out I was missing a line in appsettings.json (facepalm)
+```"AllowedHosts": "*",```
+- was not present in the development appsettings
+- looking at google oauth, but after reading a reddit thread, clerk seemed like a better option
+- 90% sure nick works there
