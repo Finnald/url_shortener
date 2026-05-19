@@ -1,0 +1,17 @@
+# Devlog hehe
+## Project details
+- Making a Link shortener webapp, hosted in Azure
+- React front end, using a C# api for the backend
+### Features
+- The idea is that users will be able to take a link, paste it in and convert it to a shortened link. 
+- Would be good to have optional login, with unauthenticated users being able to create super temporary links that last an hour
+- Logged in users can create 10 permanent links and are able to customise them
+- Users will log in with google auth
+- short link deletion
+- would be cool to have an ai safety analysis of a link
+## From creation up to now
+- Have created the C# api, db and started front end
+- DB is hosted in azure, but will likely need to make something local for testing purposes -_-
+- Haven't deployed anything else to azure, since the free subscription is so limited
+- using ai to prototype front end
+##
