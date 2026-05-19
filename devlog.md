@@ -24,3 +24,4 @@
 - looking at google oauth, but after reading a reddit thread, clerk seemed like a better option
 - 90% sure nick works there
 - Got clerk working, despite the docs. Mostly good but left out needing the publishable key :\
+- Played around with clerk for a while bcoz cool
