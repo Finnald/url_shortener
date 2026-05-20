@@ -26,6 +26,7 @@
 - Got clerk working, despite the docs. Mostly good but left out needing the publishable key :\
 - Played around with clerk for a while bcoz cool
 ### Todo 20/05/2026
-- add deletion in api
+- add deletion in api ✅
 - look into jwt, tokens and sessions
 - differentiate between users (logged in vs not) and display user links
+- modularise main page, components ✅

@@ -72,6 +72,16 @@ app.MapPost("/addCode/{link}", (string link) =>
     command.ExecuteNonQuery();
 });
 
+app.MapPost("/deleteCode/{code}", (string code) =>
+{
+    using var conn = new SqlConnection(connectionString);
+    // conn.Open();
+    var command = new SqlCommand(
+        $"DELETE FROM short_link WHERE code = '{code}'", conn);
+    command.Connection.Open();
+    command.ExecuteNonQuery();
+});
+
 // get link from code
 app.MapGet("/{code}", (string code) =>
 {
