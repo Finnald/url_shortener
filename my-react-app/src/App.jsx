@@ -1,19 +1,26 @@
 import React, { useState, useEffect } from 'react';
-import { useUser } from '@clerk/react'
 import Header from './components/Header.jsx'
 import AddLink from './components/LinkCreation.jsx'
 import PublicLinks from './components/PublicLinks.jsx'
+import UserLinks from './components/UserLinks.jsx'
+import { Show, SignInButton, SignUpButton, UserButton, useUser } from '@clerk/react'
 
 
 function App() {
 
-	const [data, setData] = useState(null);
-	const { isSignedIn, user, isLoaded } = useUser()
 
+
+	const [data, setData] = useState(null);
+	const [userData, setUserData] = useState(null);
+	const { isSignedIn, user, isLoaded } = useUser()
 
 	// will implement nicer later
 	useEffect(() => {
+
 		getPublicLinks()
+
+		getUserLinks()
+
 
 	}, []);
 
@@ -27,6 +34,18 @@ function App() {
 			.catch(error => console.error(error));
 	}
 
+	function getUserLinks() {
+		if (isSignedIn) {
+			var id = user.id
+			console.log(id)
+			setUserData(null)
+			fetch(`http://localhost:5231/getLinks/${id}`)
+				.then(response => response.json())
+				.then(json => setUserData(json))
+				.catch(error => console.error(error));
+		}
+	}
+
 
 
 	return (
@@ -35,7 +54,33 @@ function App() {
 
 
 
-			<Header></Header>
+			<header className="absolute top-0 left-0 w-full flex justify-between items-center px-6 py-4 bg-white/80 backdrop-blur-md shadow-sm border-b border-gray-200">
+				{/* Logo / Title */}
+				<h1 className="text-lg font-semibold text-gray-800">
+					smollink
+				</h1>
+
+				{/* Auth Section */}
+				<div className="flex items-center gap-3">
+					<Show when="signed-out">
+						<SignInButton mode="modal">
+							<button className="px-4 py-2 rounded-lg border border-gray-300 hover:bg-gray-100 transition text-sm">
+								Sign In
+							</button>
+						</SignInButton>
+
+						<SignUpButton mode="modal">
+							<button className="px-4 py-2 rounded-lg bg-blue-500 hover:bg-blue-600 text-white transition text-sm">
+								Sign Up
+							</button>
+						</SignUpButton>
+					</Show>
+
+					<Show when="signed-in">
+						<UserButton afterSignOutUrl="/" />
+					</Show>
+				</div>
+			</header>
 
 
 
@@ -46,8 +91,9 @@ function App() {
 					{user && <p>Greetings {user.username}</p>}
 				</div>
 
+				<AddLink getPublicLinks={getPublicLinks} userId={user?.id}></AddLink>
 
-				<AddLink getPublicLinks={getPublicLinks}></AddLink>
+				{isSignedIn && <UserLinks data={userData} getUserLinks={getUserLinks}></UserLinks>}
 
 				<PublicLinks data={data} getPublicLinks={getPublicLinks}></PublicLinks>
 			</div>

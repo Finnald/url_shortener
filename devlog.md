@@ -18,7 +18,7 @@
 - Spent a lot of time trying to get a local db solution working
 - flip flopped between in memory and just hosting a local server
 - also looked into docker, but wasn't working on work network :P
-- fiddled around with local db stuff until I gave up and found out I was missing a line in appsettings.json (facepalm)
+- fiddled around with local db stuff until I gave up and found out I was missing a line in appsettings.json (facepalm)\
 ```"AllowedHosts": "*",```
 - was not present in the development appsettings
 - looking at google oauth, but after reading a reddit thread, clerk seemed like a better option
@@ -27,6 +27,19 @@
 - Played around with clerk for a while bcoz cool
 ### Todo 20/05/2026
 - add deletion in api ✅
-- look into jwt, tokens and sessions
-- differentiate between users (logged in vs not) and display user links
+- look into jwt, tokens and sessions 🔁
+- differentiate between users (logged in vs not) and display user links ✅
 - modularise main page, components ✅
+## 20/05/2026
+- added deletion, was fairly easy
+- need to switch to EF at some point, cant keep using sql haha
+- played around with components, helped to reduce clutter on main home page
+- looked a bit into dealing with clerk tokens, will tackle at some point
+- added a section where user's links will go (not public)
+- wanting to add some validation for link adding
+- had troubles with clerk in components, have decided to leave the header in App for now
+### Todo 21/05/2026
+- use tokens to fetch userId instead of passing it
+- add link validation on front and back ends
+- cleanup current code with validations and dealing with fetch requests better (wait for response)
+- MAYBE: switch to Entity Framework for db interaction

@@ -12,7 +12,7 @@ builder.Services.AddCors(options =>
     options.AddPolicy(name: MyAllowSpecificOrigins,
                       policy =>
                       {
-                          policy.WithOrigins("http://localhost:5173");
+                          policy.WithOrigins("http://localhost:5173").AllowAnyMethod().AllowAnyHeader();
                       });
 });
 
@@ -42,14 +42,6 @@ app.UseCors(MyAllowSpecificOrigins);
 string connectionString = app.Configuration.GetConnectionString("AZURE_SQL_CONNECTIONSTRING")!;
 
 
-// using var conn = new SqlConnection(connectionString);
-// conn.Open();
-// var command = new SqlCommand(
-//     "CREATE TABLE Persons (ID int NOT NULL PRIMARY KEY IDENTITY, FirstName varchar(255), LastName varchar(255));",
-//     conn);
-// using SqlDataReader reader = command.ExecuteReader();
-
-
 // Logic
 var chars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890";
 
@@ -60,14 +52,18 @@ app.MapGet("/code", () =>
 });
 
 // map code and link
-app.MapPost("/addCode/{link}", (string link) =>
+app.MapPost("/addCode", async (AddCodeRequest req) =>
 {
+    var link = req.Link;
+    var userId = req.UserId;
+
+
     using var conn = new SqlConnection(connectionString);
     // conn.Open();
     var code = getCode();
 
     var command = new SqlCommand(
-        $"INSERT INTO short_link (code, link) VALUES ('{code}', '{link}')", conn);
+        $"INSERT INTO short_link (code, link, userId, dateCreated) VALUES ('{code}', '{link}', '{userId}', SYSDATETIME());", conn);
     command.Connection.Open();
     command.ExecuteNonQuery();
 });
@@ -105,7 +101,7 @@ app.MapGet("/all", () =>
     using var conn = new SqlConnection(connectionString);
 
     var cmd = new SqlCommand(
-        $"SELECT * FROM short_link;",
+        $"SELECT * FROM short_link WHERE userId IS NULL ORDER BY dateCreated DESC;",
         conn
         );
     cmd.Connection.Open();
@@ -130,6 +126,40 @@ app.MapGet("/all", () =>
     return results.ToArray();
 });
 
+// get links for current user
+app.MapGet("/getLinks/{userId}", (string userId) =>
+{
+    using var conn = new SqlConnection(connectionString);
+
+    Console.WriteLine(userId);
+
+    var cmd = new SqlCommand(
+        $"SELECT * FROM short_link WHERE userId='{userId}' ORDER BY dateCreated DESC;",
+        conn
+        );
+    cmd.Connection.Open();
+
+    // returns the results
+    ArrayList results = new ArrayList();
+    using (SqlDataReader reader = cmd.ExecuteReader())
+    {
+        while (reader.Read())
+        {
+            var record = new ShortLink
+            {
+                Link = reader[1].ToString(),
+                Code = reader[0].ToString()
+
+            };
+            results.Add(record);
+        }
+        string jsonString = JsonSerializer.Serialize(results);
+    }
+
+    Console.WriteLine(results.ToArray());
+
+    return results.ToArray();
+});
 
 string getCode()
 {
@@ -141,3 +171,8 @@ string getCode()
 
 app.Run();
 
+public class AddCodeRequest
+{
+    public string? Link { get; set; }
+    public string? UserId { get; set; }
+}

@@ -1,10 +1,24 @@
 import React, { useState, useEffect } from 'react';
-function AddLink({ getPublicLinks }) {
+import { useUser } from '@clerk/react'
+
+function AddLink({ getPublicLinks, userId }) {
     const [link, setLink] = useState('');
 
+
     async function addUrl(link) {
-        // should work for later
-        await fetch(`http://localhost:5231/addCode/${link}`, { method: 'POST' })
+
+        console.log(userId);
+
+        await fetch('http://localhost:5231/addCode', {
+            method: 'POST',
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+                link,
+                userId
+            })
+        })
 
         setLink("")
 
@@ -12,27 +26,28 @@ function AddLink({ getPublicLinks }) {
     }
 
     return (
-        <div className="p-6">
-            <h3 className="text-2xl font-semibold text-gray-800 mb-4">
-                Add a New Link
-            </h3>
+        <div className="flex items-center gap-3">
+            <div className="flex flex-1 shadow-sm rounded-lg">
+                <span className="px-3 flex items-center bg-gray-200 border border-r-0 border-gray-300 rounded-l-lg text-gray-400 text-md">
+                    https://
+                </span>
 
-            <div className="flex items-center gap-3">
                 <input
                     value={link}
                     onChange={e => setLink(e.target.value)}
-                    placeholder="Enter full URL"
-                    className="flex-1 rounded-lg shadow-sm px-4 py-2 border border-gray-300 bg-white"
+                    placeholder="example.com"
+                    className="flex-1 px-3 py-2 border border-gray-300 rounded-r-lg bg-white"
                 />
-
-                <button
-                    className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg shadow-sm transition"
-                    onClick={() => addUrl(link)}
-                >
-                    + Add
-                </button>
             </div>
+
+            <button
+                className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg shadow-sm transition"
+                onClick={() => addUrl(link)}
+            >
+                + Add
+            </button>
         </div>
+
     );
 
 }
