@@ -127,9 +127,16 @@ app.MapGet("/all", () =>
 });
 
 // get links for current user
-app.MapGet("/getLinks/{userId}", (string userId) =>
+app.MapGet("/getLinks/{userId}", async (string userId, HttpContext context) =>
 {
     using var conn = new SqlConnection(connectionString);
+
+    var userAuth = await UserAuthentication.IsAuthenticatedAsync(context.Request);
+
+    if (!userAuth)
+    {
+        return [Results.Unauthorized()];
+    }
 
     Console.WriteLine(userId);
 

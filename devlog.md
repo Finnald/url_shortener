@@ -39,7 +39,11 @@
 - wanting to add some validation for link adding
 - had troubles with clerk in components, have decided to leave the header in App for now
 ### Todo 21/05/2026
-- use tokens to fetch userId instead of passing it
+- use tokens to authenticate user ✅
 - add link validation on front and back ends
 - cleanup current code with validations and dealing with fetch requests better (wait for response)
 - MAYBE: switch to Entity Framework for db interaction
+## 21/05/2026
+- ok so authentication with clerk is simultaneously a nightmare and the easiest thing ever
+- you should still auth the user on requests that are user based but clerk seems really reliable at making sure the user is always correct
+- 

@@ -3,7 +3,7 @@ import Header from './components/Header.jsx'
 import AddLink from './components/LinkCreation.jsx'
 import PublicLinks from './components/PublicLinks.jsx'
 import UserLinks from './components/UserLinks.jsx'
-import { Show, SignInButton, SignUpButton, UserButton, useUser } from '@clerk/react'
+import { Show, SignInButton, SignUpButton, UserButton, useUser, useAuth } from '@clerk/react'
 
 
 function App() {
@@ -12,7 +12,8 @@ function App() {
 
 	const [data, setData] = useState(null);
 	const [userData, setUserData] = useState(null);
-	const { isSignedIn, user, isLoaded } = useUser()
+	const { userId, sessionId, getToken, isLoaded, isSignedIn, username } = useAuth()
+	const { user } = useUser()
 
 	// will implement nicer later
 	useEffect(() => {
@@ -34,12 +35,13 @@ function App() {
 			.catch(error => console.error(error));
 	}
 
-	function getUserLinks() {
+	async function getUserLinks() {
 		if (isSignedIn) {
-			var id = user.id
+			const token = await getToken();
+			var id = userId
 			console.log(id)
 			setUserData(null)
-			fetch(`http://localhost:5231/getLinks/${id}`)
+			fetch(`http://localhost:5231/getLinks/${id}`, { headers: { Authorization: `Bearer ${token}` } })
 				.then(response => response.json())
 				.then(json => setUserData(json))
 				.catch(error => console.error(error));
@@ -88,10 +90,10 @@ function App() {
 
 				{/* Box 1 — Welcome */}
 				<div className="p-6 text-3xl font-bold">
-					{user && <p>Greetings {user.username}</p>}
+					{userId && <p>Greetings {user.username}</p>}
 				</div>
 
-				<AddLink getPublicLinks={getPublicLinks} userId={user?.id}></AddLink>
+				<AddLink getPublicLinks={getPublicLinks} userId={userId}></AddLink>
 
 				{isSignedIn && <UserLinks data={userData} getUserLinks={getUserLinks}></UserLinks>}
 
