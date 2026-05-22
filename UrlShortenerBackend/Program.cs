@@ -1,8 +1,8 @@
 using System.Collections;
 using System.Text.Json;
+using Clerk.BackendAPI.Models.Components;
 using Microsoft.Data.SqlClient;
-using Superpower.Model;
-
+using Microsoft.EntityFrameworkCore;
 
 var MyAllowSpecificOrigins = "_myAllowSpecificOrigins";
 
@@ -21,7 +21,9 @@ builder.Services.AddCors(options =>
 // Globals
 const int LENGTH = 5;
 
-
+// Azure SQL Connection
+string connectionString = builder.Configuration.GetConnectionString("AZURE_SQL_CONNECTIONSTRING")!;
+builder.Services.AddDbContext<ShortLinkContext>(options => options.UseSqlServer(connectionString));
 
 // Add services to the container.
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
@@ -39,8 +41,6 @@ app.UseHttpsRedirection();
 
 app.UseCors(MyAllowSpecificOrigins);
 
-// Azure SQL Connection
-string connectionString = app.Configuration.GetConnectionString("AZURE_SQL_CONNECTIONSTRING")!;
 
 
 // Logic
@@ -52,8 +52,32 @@ app.MapGet("/code", () =>
     return getCode();
 });
 
+app.MapPost("/addCode", async (AddCodeRequest req, ShortLinkContext db) =>
+{
+    var link = req.Link;
+    var userId = req.UserId;
+
+    var code = getCode();
+
+    try
+    {
+        Console.WriteLine("Adding short link");
+        db.ShortLinks.Add(new ShortLink { Code = code, DateCreated = DateTime.UtcNow, Link = link, UserId = userId });
+        Console.WriteLine("Saving changes...");
+        await db.SaveChangesAsync();
+        Console.WriteLine("Saved!");
+        return Results.Ok();
+    }
+    catch (Exception e)
+    {
+        Console.WriteLine(e);
+        return Results.BadRequest();
+    }
+
+});
+
 // map code and link
-app.MapPost("/addCode", async (AddCodeRequest req) =>
+app.MapPost("/addCode/v1", async (AddCodeRequest req) =>
 {
     var link = req.Link;
     var userId = req.UserId;

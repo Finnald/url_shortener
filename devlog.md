@@ -57,4 +57,5 @@
 - will probably be trying to do input validation today
 - added some light link verification but its not hugely good at this point
 - only front end validation at the moment and even that's a bit bare
-- now have some feedback for when reloads are happening 
+- now have some feedback for when reloads are happening and will refresh the correct link table
+- removed redundant components (UserLinks and PublicLinks) as they could be combined into one and just pass through the values needed to each
