@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Text.Json;
 using Microsoft.Data.SqlClient;
+using Superpower.Model;
 
 
 var MyAllowSpecificOrigins = "_myAllowSpecificOrigins";
@@ -62,23 +63,44 @@ app.MapPost("/addCode", async (AddCodeRequest req) =>
     // conn.Open();
     var code = getCode();
 
-    var command = new SqlCommand(
+    try
+    {
+        var command = new SqlCommand(
         $"INSERT INTO short_link (code, link, userId, dateCreated) VALUES ('{code}', '{link}', '{userId}', SYSDATETIME());", conn);
-    command.Connection.Open();
-    command.ExecuteNonQuery();
+        command.Connection.Open();
+        command.ExecuteNonQuery();
+        return Results.Ok();
+    }
+    catch
+    {
+        return Results.BadRequest();
+    }
+
 });
 
+// deletes an entry based on the code
 app.MapPost("/deleteCode/{code}", (string code) =>
 {
     using var conn = new SqlConnection(connectionString);
     // conn.Open();
-    var command = new SqlCommand(
+
+    try
+    {
+        var command = new SqlCommand(
         $"DELETE FROM short_link WHERE code = '{code}'", conn);
-    command.Connection.Open();
-    command.ExecuteNonQuery();
+        command.Connection.Open();
+        command.ExecuteNonQuery();
+        return Results.Ok();
+    }
+    catch
+    {
+        return Results.NotFound();
+    }
+
 });
 
 // get link from code
+// unused
 app.MapGet("/{code}", (string code) =>
 {
     using var conn = new SqlConnection(connectionString);
@@ -123,7 +145,7 @@ app.MapGet("/all", () =>
         string jsonString = JsonSerializer.Serialize(results);
     }
 
-    return results.ToArray();
+    return Results.Ok(results.ToArray());
 });
 
 // get links for current user
@@ -135,7 +157,7 @@ app.MapGet("/getLinks/{userId}", async (string userId, HttpContext context) =>
 
     if (!userAuth)
     {
-        return [Results.Unauthorized()];
+        return Results.Unauthorized();
     }
 
     Console.WriteLine(userId);
@@ -163,9 +185,7 @@ app.MapGet("/getLinks/{userId}", async (string userId, HttpContext context) =>
         string jsonString = JsonSerializer.Serialize(results);
     }
 
-    Console.WriteLine(results.ToArray());
-
-    return results.ToArray();
+    return Results.Ok(results.ToArray());
 });
 
 string getCode()

@@ -1,22 +1,31 @@
 import { RotateCcw, X } from 'lucide-react'
+import React, { useState, useEffect } from 'react';
 
 
-function PublicLinks(props) {
+function LinkTable(props) {
 
     var data = props.data
-    var getPublicLinks = props.getPublicLinks
+    var getLinks = props.getLinks
+    var title = props.title
+    const [isLoading, setLoading] = useState(false)
 
     async function deleteCode(code) {
-		await fetch(`http://localhost:5231/deleteCode/${code}`, { method: 'POST' })
+        await fetch(`http://localhost:5231/deleteCode/${code}`, { method: 'POST' })
 
-		getPublicLinks()
+        handleRefresh();
 
-	}
+    }
+
+    async function handleRefresh() {
+        setLoading(true)
+        await getLinks()
+        setLoading(false)
+    }
 
     return (
         <div className="p-6">
             <h2 className="text-2xl font-semibold text-gray-800 mb-4">
-                Public Links
+                {title}
             </h2>
 
             <div className="overflow-hidden rounded-lg border border-gray-200 bg-white shadow-sm">
@@ -27,10 +36,10 @@ function PublicLinks(props) {
                             <th className="p-3 text-left">Short Link</th>
                             <th className="p-3 text-right">
                                 <button
-                                    onClick={() => { getPublicLinks() }}
-                                    className="px-1 py-1 text-xs bg-gray-200 hover:bg-gray-300 rounded"
+                                    onClick={() => { handleRefresh() }}
+                                    className={`px-1 py-1 text-xs rounded ${isLoading ? " cursor-not-allowed" : "hover:bg-gray-200 "}`}
                                 >
-                                    <RotateCcw />
+                                    <RotateCcw className={`${isLoading ? "animate-[spin_1s_linear_infinite_reverse]" : ""}`} />
                                 </button>
                             </th>
                         </tr>
@@ -111,4 +120,4 @@ function PublicLinks(props) {
     );
 }
 
-export default PublicLinks;
+export default LinkTable;

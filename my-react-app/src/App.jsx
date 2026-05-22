@@ -1,8 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import Header from './components/Header.jsx'
 import AddLink from './components/LinkCreation.jsx'
-import PublicLinks from './components/PublicLinks.jsx'
-import UserLinks from './components/UserLinks.jsx'
+import LinkTable from './components/LinkTable.jsx'
 import { Show, SignInButton, SignUpButton, UserButton, useUser, useAuth } from '@clerk/react'
 
 
@@ -27,9 +26,9 @@ function App() {
 
 
 
-	function getPublicLinks() {
+	async function getPublicLinks() {
 		setData(null);
-		fetch('http://localhost:5231/all')
+		await fetch('http://localhost:5231/all')
 			.then(response => response.json())
 			.then(json => setData(json))
 			.catch(error => console.error(error));
@@ -41,7 +40,7 @@ function App() {
 			var id = userId
 			console.log(id)
 			setUserData(null)
-			fetch(`http://localhost:5231/getLinks/${id}`, { headers: { Authorization: `Bearer ${token}` } })
+			await fetch(`http://localhost:5231/getLinks/${id}`, { headers: { Authorization: `Bearer ${token}` } })
 				.then(response => response.json())
 				.then(json => setUserData(json))
 				.catch(error => console.error(error));
@@ -88,16 +87,20 @@ function App() {
 
 			<div className="w-full max-w-2xl">
 
-				{/* Box 1 — Welcome */}
+				{/* Welcome */}
 				<div className="p-6 text-3xl font-bold">
 					{userId && <p>Greetings {user.username}</p>}
 				</div>
 
-				<AddLink getPublicLinks={getPublicLinks} userId={userId}></AddLink>
+				{/* Add Link box */}
+				<AddLink getPublicLinks={getPublicLinks} getUserLinks={getUserLinks} userId={userId}></AddLink>
 
-				{isSignedIn && <UserLinks data={userData} getUserLinks={getUserLinks}></UserLinks>}
+				{/* Links specific to a user */}
+				{isSignedIn && <LinkTable data={userData} getLinks={getUserLinks} title="Your Links"></LinkTable>}
 
-				<PublicLinks data={data} getPublicLinks={getPublicLinks}></PublicLinks>
+				{/* Links made by unauthorized users */}
+				<LinkTable data={data} getLinks={getPublicLinks} title="Public Links"></LinkTable>
+
 			</div>
 		</div>
 	);

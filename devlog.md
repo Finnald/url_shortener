@@ -46,4 +46,15 @@
 ## 21/05/2026
 - ok so authentication with clerk is simultaneously a nightmare and the easiest thing ever
 - you should still auth the user on requests that are user based but clerk seems really reliable at making sure the user is always correct
-- 
+- brain feeling a bit fried ngl
+### Todo 22/05/2026
+- add link validation on front end ✅
+- link validation back end
+- show when fetch requests are running with loading ✅
+- MAYBE: switch to Entity Framework for db interaction
+## 22/05/2026
+- Yesterday was a bit of a doozy figuring out how clerk handles sessions
+- will probably be trying to do input validation today
+- added some light link verification but its not hugely good at this point
+- only front end validation at the moment and even that's a bit bare
+- now have some feedback for when reloads are happening 
