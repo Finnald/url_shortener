@@ -76,44 +76,16 @@ app.MapPost("/addCode", async (AddCodeRequest req, ShortLinkContext db) =>
 
 });
 
-// map code and link
-app.MapPost("/addCode/v1", async (AddCodeRequest req) =>
-{
-    var link = req.Link;
-    var userId = req.UserId;
-
-
-    using var conn = new SqlConnection(connectionString);
-    // conn.Open();
-    var code = getCode();
-
-    try
-    {
-        var command = new SqlCommand(
-        $"INSERT INTO short_link (code, link, userId, dateCreated) VALUES ('{code}', '{link}', '{userId}', SYSDATETIME());", conn);
-        command.Connection.Open();
-        command.ExecuteNonQuery();
-        return Results.Ok();
-    }
-    catch
-    {
-        return Results.BadRequest();
-    }
-
-});
 
 // deletes an entry based on the code
-app.MapPost("/deleteCode/{code}", (string code) =>
+app.MapPost("/deleteCode/{code}", async (string code, ShortLinkContext db) =>
 {
-    using var conn = new SqlConnection(connectionString);
-    // conn.Open();
+
 
     try
     {
-        var command = new SqlCommand(
-        $"DELETE FROM short_link WHERE code = '{code}'", conn);
-        command.Connection.Open();
-        command.ExecuteNonQuery();
+        db.ShortLinks.Remove(new ShortLink { Code = code });
+        await db.SaveChangesAsync();
         return Results.Ok();
     }
     catch
@@ -124,92 +96,56 @@ app.MapPost("/deleteCode/{code}", (string code) =>
 });
 
 // get link from code
-// unused
-app.MapGet("/{code}", (string code) =>
+// currently unused
+app.MapGet("/{code}", async (string code, ShortLinkContext db) =>
 {
-    using var conn = new SqlConnection(connectionString);
+    try
+    {
+        var shortLink = await db.ShortLinks.SingleAsync(l => l.Code == code);
+        var link = shortLink.Link;
+        return Results.Ok(link);
+    }
+    catch (Exception e)
+    {
+        return Results.BadRequest(e);
+    }
 
-    var cmd = new SqlCommand(
-        $"SELECT link FROM short_link WHERE code = '{code}';",
-        conn
-        );
-    cmd.Connection.Open();
-
-    // returns the result, there should only be one result as searching by pk
-    var reader = cmd.ExecuteReader();
-    reader.Read();
-    return $"http://{reader[0]}";
 });
 
 // get all links
-app.MapGet("/all", () =>
+app.MapGet("/all", async (ShortLinkContext db) =>
 {
-    using var conn = new SqlConnection(connectionString);
-
-    var cmd = new SqlCommand(
-        $"SELECT * FROM short_link WHERE userId IS NULL ORDER BY dateCreated DESC;",
-        conn
-        );
-    cmd.Connection.Open();
-
-    // returns the results
-    ArrayList results = new ArrayList();
-    using (SqlDataReader reader = cmd.ExecuteReader())
+    try
     {
-        while (reader.Read())
-        {
-            var record = new ShortLink
-            {
-                Link = reader[1].ToString(),
-                Code = reader[0].ToString()
-
-            };
-            results.Add(record);
-        }
-        string jsonString = JsonSerializer.Serialize(results);
+        var publicLinks = await db.ShortLinks.Where(l => l.UserId.Equals(null)).ToListAsync();
+        return Results.Ok(publicLinks);
     }
-
-    return Results.Ok(results.ToArray());
+    catch (Exception e)
+    {
+        return Results.BadRequest(e);
+    }
 });
 
 // get links for current user
-app.MapGet("/getLinks/{userId}", async (string userId, HttpContext context) =>
+app.MapGet("/getLinks/{userId}", async (string userId, HttpContext context, ShortLinkContext db) =>
 {
-    using var conn = new SqlConnection(connectionString);
 
+    // Checks if the user is properly authenticated using clerk before continuing
     var userAuth = await UserAuthentication.IsAuthenticatedAsync(context.Request);
-
     if (!userAuth)
     {
         return Results.Unauthorized();
     }
 
-    Console.WriteLine(userId);
-
-    var cmd = new SqlCommand(
-        $"SELECT * FROM short_link WHERE userId='{userId}' ORDER BY dateCreated DESC;",
-        conn
-        );
-    cmd.Connection.Open();
-
-    // returns the results
-    ArrayList results = new ArrayList();
-    using (SqlDataReader reader = cmd.ExecuteReader())
+    try
     {
-        while (reader.Read())
-        {
-            var record = new ShortLink
-            {
-                Link = reader[1].ToString(),
-                Code = reader[0].ToString()
-
-            };
-            results.Add(record);
-        }
-        string jsonString = JsonSerializer.Serialize(results);
+        var userLinks = await db.ShortLinks.Where(l => l.UserId.Equals(userId)).ToListAsync();
+        return Results.Ok(userLinks);
     }
-
-    return Results.Ok(results.ToArray());
+    catch (Exception e)
+    {
+        return Results.BadRequest(e);
+    }
 });
 
 string getCode()

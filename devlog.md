@@ -51,7 +51,7 @@
 - add link validation on front end ✅
 - link validation back end
 - show when fetch requests are running with loading ✅
-- MAYBE: switch to Entity Framework for db interaction
+- MAYBE: switch to Entity Framework for db interaction 
 ## 22/05/2026
 - Yesterday was a bit of a doozy figuring out how clerk handles sessions
 - will probably be trying to do input validation today
@@ -59,3 +59,53 @@
 - only front end validation at the moment and even that's a bit bare
 - now have some feedback for when reloads are happening and will refresh the correct link table
 - removed redundant components (UserLinks and PublicLinks) as they could be combined into one and just pass through the values needed to each
+- started switching to EF
+## 25/05/2026
+- busy weekend, busy monday
+- efcore hugely improved code readability
+- takes something like this:
+```app.MapGet("/all/v1", () =>
+{
+    using var conn = new SqlConnection(connectionString);
+
+    var cmd = new SqlCommand(
+        $"SELECT * FROM ShortLinks WHERE userId IS NULL ORDER BY dateCreated DESC;",
+        conn
+        );
+    cmd.Connection.Open();
+
+    // returns the results
+    ArrayList results = new ArrayList();
+    using (SqlDataReader reader = cmd.ExecuteReader())
+    {
+        while (reader.Read())
+        {
+            var record = new ShortLink
+            {
+                Link = reader[1].ToString(),
+                Code = reader[0].ToString()
+
+            };
+            results.Add(record);
+        }
+        string jsonString = JsonSerializer.Serialize(results);
+    }
+
+    return Results.Ok(results.ToArray());
+});
+```
+- and turns it into this:
+```app.MapGet("/all", async (ShortLinkContext db) =>
+{
+    try
+    {
+        var publicLinks = await db.ShortLinks.ToListAsync();
+        return Results.Ok(publicLinks);
+    }
+    catch (Exception e)
+    {
+        return Results.BadRequest(e);
+    }
+});
+```
+- much, much cleaner (and more secure)

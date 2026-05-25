@@ -13,6 +13,9 @@ function App() {
 	const [userData, setUserData] = useState(null);
 	const { userId, sessionId, getToken, isLoaded, isSignedIn, username } = useAuth()
 	const { user } = useUser()
+	const [selectedView, setSelectedView] = useState(
+		isSignedIn ? "user" : "public"
+	);
 
 	// will implement nicer later
 	useEffect(() => {
@@ -95,11 +98,55 @@ function App() {
 				{/* Add Link box */}
 				<AddLink getPublicLinks={getPublicLinks} getUserLinks={getUserLinks} userId={userId}></AddLink>
 
-				{/* Links specific to a user */}
-				{isSignedIn && <LinkTable data={userData} getLinks={getUserLinks} title="Your Links"></LinkTable>}
 
-				{/* Links made by unauthorized users */}
-				<LinkTable data={data} getLinks={getPublicLinks} title="Public Links"></LinkTable>
+
+				<div>
+
+					{/* Side-by-side selector */}
+					<div className="flex gap-4 mt-8 text-lg font-medium">
+
+						{/* Public Links */}
+						<div
+							onClick={() => setSelectedView("public")}
+							className={`
+                    			cursor-pointer pb-1
+                    			${selectedView === "public" ? "border-b-2 border-blue-600 text-blue-600" : "text-gray-500"}
+							`}
+						>
+							Public Links
+						</div>
+
+						{/* Your Links (only if signed in) */}
+						{isSignedIn && (
+							<div
+								onClick={() => setSelectedView("user")}
+								className={`
+									cursor-pointer pb-1
+									${selectedView === "user" ? "border-b-2 border-blue-600 text-blue-600" : "text-gray-500"}
+								`}
+							>
+								Your Links
+							</div>
+						)}
+
+					</div>
+
+					{/* Render selected table */}
+					{selectedView === "public" && (
+						<LinkTable
+							data={data}
+							getLinks={getPublicLinks}
+						/>
+					)}
+
+					{selectedView === "user" && isSignedIn && (
+						<LinkTable
+							data={userData}
+							getLinks={getUserLinks}
+						/>
+					)}
+
+				</div>
 
 			</div>
 		</div>

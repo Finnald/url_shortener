@@ -23,7 +23,7 @@ function LinkTable(props) {
     }
 
     return (
-        <div className="p-6">
+        <div className="">
             <h2 className="text-2xl font-semibold text-gray-800 mb-4">
                 {title}
             </h2>
