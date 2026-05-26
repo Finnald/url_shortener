@@ -43,10 +43,9 @@ app.UseCors(MyAllowSpecificOrigins);
 
 
 
-// Logic
 var chars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890";
 
-
+// Endpoints
 app.MapGet("/code", () =>
 {
     return getCode();
@@ -117,7 +116,7 @@ app.MapGet("/all", async (ShortLinkContext db) =>
 {
     try
     {
-        var publicLinks = await db.ShortLinks.Where(l => l.UserId.Equals(null)).ToListAsync();
+        var publicLinks = await db.ShortLinks.OrderByDescending(s => s.DateCreated).ToListAsync();
         return Results.Ok(publicLinks);
     }
     catch (Exception e)

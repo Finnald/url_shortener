@@ -1,5 +1,6 @@
 import { RotateCcw, X } from 'lucide-react'
 import React, { useState, useEffect } from 'react';
+import { LoaderCircle } from 'lucide-react';
 
 
 function LinkTable(props) {
@@ -7,6 +8,7 @@ function LinkTable(props) {
     var data = props.data
     var getLinks = props.getLinks
     var title = props.title
+    const root = window.location.origin
     const [isLoading, setLoading] = useState(false)
 
     async function deleteCode(code) {
@@ -39,7 +41,8 @@ function LinkTable(props) {
                                     onClick={() => { handleRefresh() }}
                                     className={`px-1 py-1 text-xs rounded ${isLoading ? " cursor-not-allowed" : "hover:bg-gray-200 "}`}
                                 >
-                                    <RotateCcw className={`${isLoading ? "animate-[spin_1s_linear_infinite_reverse]" : ""}`} />
+                                    {isLoading ? <LoaderCircle className="animate-spin" />
+                                        : <RotateCcw />}
                                 </button>
                             </th>
                         </tr>
@@ -66,12 +69,12 @@ function LinkTable(props) {
 
                                     <td className="p-3">
                                         <a
-                                            href={`https://url.com/${item.code}`}
+                                            href={`${root}/${item.code}`}
                                             target="_blank"
                                             rel="noreferrer"
                                             className="text-green-600 font-medium hover:underline"
                                         >
-                                            url.com/{item.code}
+                                            {root}/{item.code}
                                         </a>
                                     </td>
                                     <td className="p-3 text-right">

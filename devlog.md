@@ -109,3 +109,14 @@
 });
 ```
 - much, much cleaner (and more secure)
+### What was done 25/05/2026
+- switched from sql queries to efcore
+- some minor ui changes
+## 26/05/2026
+- Looking into routing, seems weird compared to Svelte
+- Should be relatively easy to set up a redirect page
+### Tasks 26/05/2026
+- Make functional routing for links ✅
+- remove deletion from public links
+- reload public and user links on adding a link
+- add 24 hour link deletion for public links
