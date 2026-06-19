@@ -1,0 +1,10 @@
+name: test
+run-name: test run yahoo
+on: push
+jobs:
+  Terraform:
+    runs-on: ubuntu-latest
+    steps:
+      - run: echo "starting..."
+      - run: terraform apply -auto-approve
+      - run: echo "done!"
