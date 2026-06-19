@@ -82,9 +82,9 @@ UrlShortenerBackend/appsettings.local.json
 #######################################
 # Misc
 #######################################
+terraform-test/.terraform/
 *.swp
 *.tmp
 *.bak
 *.orig
-.terraform/
 ``
