@@ -7,7 +7,7 @@ function LinkTable(props) {
 
     var data = props.data
     var getLinks = props.getLinks
-    var title = props.title
+    var canDelete = props.canDelete
     const root = window.location.origin
     const [isLoading, setLoading] = useState(false)
 
@@ -26,9 +26,6 @@ function LinkTable(props) {
 
     return (
         <div className="">
-            <h2 className="text-2xl font-semibold text-gray-800 mb-4">
-                {title}
-            </h2>
 
             <div className="overflow-hidden rounded-lg border border-gray-200 bg-white shadow-sm">
                 <table className="w-full text-sm">
@@ -78,12 +75,15 @@ function LinkTable(props) {
                                         </a>
                                     </td>
                                     <td className="p-3 text-right">
-                                        <button
-                                            onClick={() => { deleteCode(item.code) }}
-                                            className="p-1 hover:bg-gray-200 rounded"
-                                        >
-                                            <X width='20' height='20' />
-                                        </button>
+                                        {canDelete &&
+                                            (<button
+                                                onClick={() => { deleteCode(item.code) }}
+                                                className="p-1 hover:bg-gray-200 rounded"
+                                            >
+                                                <X width='20' height='20' />
+                                            </button>
+                                            )}
+
                                     </td>
                                 </tr>
                             ))

@@ -115,8 +115,10 @@
 ## 26/05/2026
 - Looking into routing, seems weird compared to Svelte
 - Should be relatively easy to set up a redirect page
+- made trello board https://trello.com/b/nx0aUXpQ/smollink
 ### Tasks 26/05/2026
 - Make functional routing for links ✅
-- remove deletion from public links
+- remove deletion from public links ✅
 - reload public and user links on adding a link
 - add 24 hour link deletion for public links
+- check for existing link code before trying to assign!!

@@ -136,6 +136,7 @@ function App() {
 						<LinkTable
 							data={data}
 							getLinks={getPublicLinks}
+							canDelete={false}
 						/>
 					)}
 
@@ -143,6 +144,7 @@ function App() {
 						<LinkTable
 							data={userData}
 							getLinks={getUserLinks}
+							canDelete={true}
 						/>
 					)}
 

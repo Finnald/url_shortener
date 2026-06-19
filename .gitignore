@@ -86,4 +86,5 @@ UrlShortenerBackend/appsettings.local.json
 *.tmp
 *.bak
 *.orig
+.terraform/
 ``
