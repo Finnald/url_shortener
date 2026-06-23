@@ -6,7 +6,7 @@ jobs:
     runs-on: ubuntu-latest
     defaults:
       run: 
-        working-directory: ./terraform-test
+        working-directory: terraform-test
     steps:
       - run: echo "starting..."
       - run: terraform init
