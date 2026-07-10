@@ -25,6 +25,11 @@ const int LENGTH = 5;
 string connectionString = builder.Configuration.GetConnectionString("AZURE_SQL_CONNECTIONSTRING")!;
 builder.Services.AddDbContext<ShortLinkContext>(options => options.UseSqlServer(connectionString));
 
+Console.WriteLine(string.IsNullOrWhiteSpace(connectionString)
+    ? "Connection string missing"
+    : "Connection string loaded");
+
+
 // Add services to the container.
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services.AddOpenApi();
