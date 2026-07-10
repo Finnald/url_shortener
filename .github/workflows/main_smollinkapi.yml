@@ -17,7 +17,7 @@ jobs:
 
     defaults:
       run:
-        working-directory: ./urlshortener_backend
+        working-directory: ./UrlShortenerBackend
         
     steps:
       - uses: actions/checkout@v4
