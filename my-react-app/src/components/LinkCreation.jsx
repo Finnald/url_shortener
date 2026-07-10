@@ -6,6 +6,8 @@ function AddLink({ getPublicLinks, getUserLinks, userId }) {
     const [link, setLink] = useState('');
     const [statusMessage, setStatusMessage] = useState('')
     const [loading, setLoading] = useState(false)
+    const API_URL = import.meta.env.VITE_API_URL
+
 
 
     async function addUrl(link) {
@@ -25,7 +27,7 @@ function AddLink({ getPublicLinks, getUserLinks, userId }) {
         }
 
         setLoading(true)
-        const res = await fetch('http://localhost:5231/addCode', {
+        const res = await fetch(`${API_URL}/addCode`, {
             method: 'POST',
             headers: {
                 "Content-Type": "application/json",

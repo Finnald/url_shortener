@@ -6,6 +6,7 @@ export default function RedirectPage() {
     const { code } = useParams();
     const [data, setData] = useState(null);
     const [loading, setloading] = useState(true);
+    const API_URL = import.meta.env.VITE_API_URL
 
     useEffect(() => {
         getLink()
@@ -13,7 +14,7 @@ export default function RedirectPage() {
 
     async function getLink() {
         setloading(true)
-        await fetch(`http://localhost:5231/${code}`)
+        await fetch(`${API_URL}/${code}`)
             .then(response => response.json())
             .then(json => setData(json))
             .catch(error => console.error(error));

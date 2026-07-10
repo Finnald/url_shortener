@@ -16,6 +16,7 @@ function App() {
 	const [selectedView, setSelectedView] = useState(
 		isSignedIn ? "user" : "public"
 	);
+	const API_URL = import.meta.env.VITE_API_URL
 
 	// will implement nicer later
 	useEffect(() => {
@@ -31,7 +32,8 @@ function App() {
 
 	async function getPublicLinks() {
 		setData(null);
-		await fetch('http://localhost:5231/all')
+		console.log(`${API_URL}/all`)
+		await fetch(`${API_URL}/all`)
 			.then(response => response.json())
 			.then(json => setData(json))
 			.catch(error => console.error(error));
@@ -43,7 +45,7 @@ function App() {
 			var id = userId
 			console.log(id)
 			setUserData(null)
-			await fetch(`http://localhost:5231/getLinks/${id}`, { headers: { Authorization: `Bearer ${token}` } })
+			await fetch(`${API_URL}/getLinks/${id}`, { headers: { Authorization: `Bearer ${token}` } })
 				.then(response => response.json())
 				.then(json => setUserData(json))
 				.catch(error => console.error(error));

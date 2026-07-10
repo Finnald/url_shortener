@@ -10,9 +10,11 @@ function LinkTable(props) {
     var canDelete = props.canDelete
     const root = window.location.origin
     const [isLoading, setLoading] = useState(false)
+    const API_URL = import.meta.env.VITE_API_URL
+
 
     async function deleteCode(code) {
-        await fetch(`http://localhost:5231/deleteCode/${code}`, { method: 'POST' })
+        await fetch(`${API_URL}/deleteCode/${code}`, { method: 'POST' })
 
         handleRefresh();
 
