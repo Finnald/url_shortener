@@ -1,7 +1,7 @@
 # Docs for the Azure Web Apps Deploy action: https://github.com/azure/functions-action
 # More GitHub Actions for Azure: https://github.com/Azure/actions
 
-name: Build and deploy dotnet core project to Azure Function App - urlshortenerjobs
+name: Build and deploy jobs
 
 on:
   push:
@@ -19,6 +19,9 @@ jobs:
     permissions:
       id-token: write #This is required for requesting the JWT
       contents: read #This is required for actions/checkout
+    defaults:
+      run:
+        working-directory: ./RemoveLinks
 
     steps:
       - name: 'Checkout GitHub Action'
