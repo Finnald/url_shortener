@@ -1,52 +1,53 @@
-name: Build and deploy jobs
+# Docs for the Azure Web Apps Deploy action: https://github.com/azure/functions-action
+# More GitHub Actions for Azure: https://github.com/Azure/actions
+
+name: Build and deploy dotnet core project to Azure Function App - urlshortenerjobs
 
 on:
-    push:
-        branches:
-            - main
-    workflow_dispatch:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
 
 env:
-    DOTNET_VERSION: "10.0"
+  AZURE_FUNCTIONAPP_PACKAGE_PATH: '.' # set this to the path to your web app project, defaults to the repository root
+  DOTNET_VERSION: '10.0.x' # set this to the dotnet version to use
 
 jobs:
-    build-and-deploy:
-        runs-on: ubuntu-latest
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write #This is required for requesting the JWT
+      contents: read #This is required for actions/checkout
 
-        permissions:
-            id-token: write
-            contents: read
+    steps:
+      - name: 'Checkout GitHub Action'
+        uses: actions/checkout@v4
 
-        steps:
-            - name: Checkout repository
-              uses: actions/checkout@v4
+      - name: Setup DotNet ${{ env.DOTNET_VERSION }} Environment
+        uses: actions/setup-dotnet@v1
+        with:
+          dotnet-version: ${{ env.DOTNET_VERSION }}
 
-            - name: Setup .NET
-              uses: actions/setup-dotnet@v4
-              with:
-                  dotnet-version: ${{ env.DOTNET_VERSION }}
+      - name: 'Resolve Project Dependencies Using Dotnet'
+        shell: bash
+        run: |
+          pushd './${{ env.AZURE_FUNCTIONAPP_PACKAGE_PATH }}'
+          dotnet build --configuration Release --output ./output
+          popd
+      
+      - name: Login to Azure
+        uses: azure/login@v2
+        with:
+          client-id: ${{ secrets.AZUREAPPSERVICE_CLIENTID_4EA105A4734C4D5497455188DC44D1AC }}
+          tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID_213F0B3C28144AD28C9DF28288F75854 }}
+          subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_A3356035312D47F2A7BDF61A2FC6A0CD }}
 
-            - name: Publish Function App
-              working-directory: ./RemoveLinks
-              run: |
-                  dotnet restore
-                  dotnet publish -c Release -o output
-
-            - name: Verify publish output
-              run: |
-                  echo "Contents of RemoveLinks/output:"
-                  ls -la ./RemoveLinks/output
-
-            - name: Login to Azure
-              uses: azure/login@v2
-              with:
-                  client-id: ${{ secrets.AZUREAPPSERVICE_CLIENTID_AD8B25AEC2F1422E96E491AB2031B79A }}
-                  tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID_AA0459BF05D842D69BDC432A5F279EDD }}
-                  subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_995144ED8CB34E35AE4C0894126857EF }}
-
-            - name: Deploy Function App
-              uses: Azure/functions-action@v1
-              with:
-                  app-name: urlshortenerjobs
-                  slot-name: Production
-                  package: ./RemoveLinks/output
+      - name: 'Run Azure Functions Action'
+        uses: Azure/functions-action@v1
+        id: fa
+        with:
+          app-name: 'urlshortenerjobs'
+          slot-name: 'Production'
+          package: '${{ env.AZURE_FUNCTIONAPP_PACKAGE_PATH }}/output'
+          
