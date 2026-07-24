@@ -18,14 +18,14 @@ jobs:
     defaults:
       run:
         working-directory: ./UrlShortenerBackend
-        
+
     steps:
       - uses: actions/checkout@v4
 
       - name: Set up .NET Core
         uses: actions/setup-dotnet@v4
         with:
-          dotnet-version: '10.x'
+          dotnet-version: "10.x"
 
       - name: Build with dotnet
         run: dotnet build --configuration Release
@@ -51,7 +51,7 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           name: .net-app
-      
+
       - name: Login to Azure
         uses: azure/login@v2
         with:
@@ -63,7 +63,6 @@ jobs:
         id: deploy-to-webapp
         uses: azure/webapps-deploy@v3
         with:
-          app-name: 'smollinkapi'
-          slot-name: 'Production'
+          app-name: "smollinkapi"
+          slot-name: "Production"
           package: .
-          
