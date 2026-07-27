@@ -126,7 +126,10 @@ app.MapGet("/all", async (ShortLinkContext db) =>
     }
     catch (Exception e)
     {
-        return Results.BadRequest(e);
+        Console.WriteLine(e);
+        return Results.Problem(
+        detail: e.Message,
+        statusCode: 500);
     }
 });
 
