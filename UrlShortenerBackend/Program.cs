@@ -22,8 +22,8 @@ builder.Services.AddCors(options =>
 const int LENGTH = 5;
 
 // Azure SQL Connection
-string connectionString = builder.Configuration.GetConnectionString("AZURE_SQL_CONNECTIONSTRING")!;
-builder.Services.AddDbContext<ShortLinkContext>(options => options.UseSqlServer(connectionString));
+string connectionString = builder.Configuration.GetConnectionString("SUPABASE")!;
+builder.Services.AddDbContext<ShortLinkContext>(options => options.UseNpgsql(connectionString));
 
 Console.WriteLine(string.IsNullOrWhiteSpace(connectionString)
     ? "Connection string missing"
