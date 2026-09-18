@@ -56,7 +56,7 @@ function App() {
 
 	return (
 
-		<div className="min-h-screen flex my-15 justify-center bg-gray-100 p-6">
+		<div className="h-screen flex justify-center bg-gray-100 p-6">
 
 
 
@@ -90,7 +90,14 @@ function App() {
 
 
 
-			<div className="w-full max-w-2xl">
+
+
+			<div className="w-full max-w-2xl mt-15">
+
+				<div class="bg-orange-100 border border-orange-400 text-orange-700 px-4 py-3 rounded relative" role="alert">
+					<strong class="font-bold">Hi! </strong>
+					<span class="block sm:inline">This website is actively under development (and may be broken sometimes). If you have any feedback, please contact <a className="underline" href="mailto:smollink@finnald.com">smollink@finnald.com.</a> Thanks for visiting!</span>
+				</div>
 
 				{/* Welcome */}
 				<div className="p-6 text-3xl font-bold">
